@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+require 'optparse'
+
+require 'bundler/setup' # TODO: Remove this debug line
+
+require 'stupid_crawler'
+
+site = nil
+max_urls = Float::INFINITY
+sleep_time = 0.1
+robots = false
+ignore_links = nil
+
+optparse = OptionParser.new do |parser|
+  parser.on('--site=example.com', String, 'The site to crawl') do |value|
+    site = value
+  end
+
+  parser.on('--max=10000', Integer, 'Max number of URLs to crawl') do |value|
+    max_urls = value
+  end
+
+  parser.on('--sleep=0.1', Integer, 'Sleep time between URL fetches') do |value|
+    sleep_time = value
+  end
+
+  parser.on('--ignore-links=/blog/', String, 'Ignore links matching this pattern') do |value|
+    ignore_links = value
+  end
+
+  parser.on('--[no-]robots', "Respect robots.txt (default: false)") do |value|
+    robots = value
+  end
+
+  parser.on('-h', '--help', 'How to use') do
+    puts parser
+    exit
+  end
+end
+
+optparse.parse!
+
+if site.nil? || site.strip.empty?
+  raise OptionParser::MissingArgument, "'--site' can't be blank"
+end
+
+crawler = StupidCrawler::Crawler.new(
+  site,
+  max_urls: max_urls,
+  sleep_time: sleep_time,
+  robots: robots,
+  ignore_pattern: ignore_links
+).perform
