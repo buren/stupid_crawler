@@ -3,14 +3,14 @@ require 'spidr'
 
 module StupidCrawler
   class Crawler
-    attr_reader :site, :max_urls, :sleep_time, :robots, :ignore_links
+    attr_reader :site, :max_urls, :sleep_time, :robots, :ignore_pattern
 
     def initialize(site, max_urls:, sleep_time:, robots:, ignore_pattern:)
       @site = site
       @max_urls = max_urls
       @sleep_time = sleep_time
       @robots = robots
-      @ignore_links = ignore_pattern.nil? ? [Regexp.new(ignore_pattern)] : []
+      @ignore_pattern = ignore_pattern.nil? ? [Regexp.new(ignore_pattern)] : []
     end
 
     def perform

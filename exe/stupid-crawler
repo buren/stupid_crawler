@@ -16,15 +16,15 @@ optparse = OptionParser.new do |parser|
     site = value
   end
 
-  parser.on('--max=10000', Integer, 'Max number of URLs to crawl') do |value|
+  parser.on('--max=10000', Integer, 'Max number of URLs to crawl (default: Infinity)') do |value|
     max_urls = value
   end
 
-  parser.on('--sleep=0.1', Integer, 'Sleep time between URL fetches') do |value|
+  parser.on('--sleep=0.1', Integer, 'Sleep time between URL fetches (default: 0.1)') do |value|
     sleep_time = value
   end
 
-  parser.on('--ignore-links=/blog/', String, 'Ignore links matching this pattern') do |value|
+  parser.on('--ignore-links=/blog/', String, 'Ignore links matching this pattern (default: none)') do |value|
     ignore_links = value
   end
 
