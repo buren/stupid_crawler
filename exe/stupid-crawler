@@ -49,5 +49,5 @@ crawler = StupidCrawler::Crawler.new(
   max_urls: max_urls,
   sleep_time: sleep_time,
   robots: robots,
-  ignore_pattern: ignore_links
+  ignore_links: ignore_links
 ).perform
