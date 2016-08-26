@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Stupid crawler that looks for URLs on a given site.}
   spec.description   = %q{Stupid crawler that looks for URLs on a given site. Result is saved as two CSV files one with found URLs and another with failed URLs.}
-  spec.homepage      = 'https://github/com/young-skilled/stupid_crawler'
+  spec.homepage      = 'https://github/com/buren/stupid_crawler'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
