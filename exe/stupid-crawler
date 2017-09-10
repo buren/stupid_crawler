@@ -9,7 +9,7 @@ max_urls = Float::INFINITY
 sleep_time = 0.1
 robots = false
 ignore_links = nil
-dir_path = ''
+dir_path = nil
 
 optparse = OptionParser.new do |parser|
   parser.on('--site=example.com', String, 'The site to crawl') do |value|
@@ -60,5 +60,5 @@ result = StupidCrawler::Crawler.new(
   ignore_links: ignore_links
 ).call
 
-dir_path = URI.parse(site).host
+dir_path = URI.parse(site).host if dir_path.nil?
 StupidCrawler::ResultWriter.call(result, dir_path: dir_path)
