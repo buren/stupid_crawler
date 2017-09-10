@@ -1,20 +1,23 @@
+require 'uri'
 require 'set'
 require 'spidr'
 
 module StupidCrawler
   class Crawler
-    attr_reader :site, :max_urls, :sleep_time, :robots, :ignore_links
+    NotAbsoluteURI = Class.new(ArgumentError)
+
+    attr_reader :uri, :max_urls, :sleep_time, :robots, :ignore_links
 
     def initialize(site, max_urls:, sleep_time:, robots:, ignore_links:)
-      @site = site
+      @uri = build_uri!(site)
       @max_urls = max_urls
       @sleep_time = sleep_time
       @robots = robots
       @ignore_links = ignore_links.nil? ? [] : [Regexp.new(ignore_links)]
     end
 
-    def perform
-      dump_result(crawl)
+    def call
+      crawl
     end
 
     private
@@ -23,7 +26,7 @@ module StupidCrawler
       found_urls = Set.new
       failed_urls = Set.new
 
-      Spidr.site(site, ignore_links: ignore_links, robots: robots) do |spider|
+      Spidr.site(uri.to_s, ignore_links: ignore_links, robots: robots) do |spider|
        spider.every_url do |url|
          puts url
          found_urls << url
@@ -42,15 +45,14 @@ module StupidCrawler
       }
     end
 
-    def dump_result(result_hash)
-      timestamp = Time.new.strftime("%Y-%m-%d-%H-%M-%S")
-      formatted_site = site.delete('/').delete(':').delete('?') # Strip "illegal" chars from filename
+    def build_uri!(site)
+      uri = URI.parse(site)
 
-      found = result_hash[:found]
-      fails = result_hash[:failed]
+      unless uri.absolute
+        raise(NotAbsoluteURI, 'must be an absolute url with http(s) protocol')
+      end
 
-      File.write("found-#{formatted_site}-#{timestamp}.csv", found.join("\n"))
-      File.write("fails-#{formatted_site}-#{timestamp}.csv", fails.join("\n"))
+      uri
     end
   end
 end

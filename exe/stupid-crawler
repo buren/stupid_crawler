@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'optparse'
-
-require 'bundler/setup' # TODO: Remove this debug line
+require 'uri'
 
 require 'stupid_crawler'
 
@@ -10,6 +9,7 @@ max_urls = Float::INFINITY
 sleep_time = 0.1
 robots = false
 ignore_links = nil
+dir_path = ''
 
 optparse = OptionParser.new do |parser|
   parser.on('--site=example.com', String, 'The site to crawl') do |value|
@@ -28,6 +28,10 @@ optparse = OptionParser.new do |parser|
     ignore_links = value
   end
 
+  parser.on('--output=/result/', String, 'Output directory (default:)') do |value|
+    dir_path = value
+  end
+
   parser.on('--[no-]robots', "Respect robots.txt (default: false)") do |value|
     robots = value
   end
@@ -40,14 +44,21 @@ end
 
 optparse.parse!
 
-if site.nil? || site.strip.empty?
+if site.nil? || site.empty?
   raise OptionParser::MissingArgument, "'--site' can't be blank"
 end
 
-crawler = StupidCrawler::Crawler.new(
+unless site.start_with?('http://') || site.start_with?('https://')
+  site = "http://#{site}"
+end
+
+result = StupidCrawler::Crawler.new(
   site,
   max_urls: max_urls,
   sleep_time: sleep_time,
   robots: robots,
   ignore_links: ignore_links
-).perform
+).call
+
+dir_path = URI.parse(site).host
+StupidCrawler::ResultWriter.call(result, dir_path: dir_path)
